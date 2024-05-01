@@ -30,9 +30,6 @@ export const FormScreenContainer = ({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      component="form"
-      noValidate
-      autoComplete="off"
       sx={{ background: "#f5f5f5" }}
     >
       {children}
