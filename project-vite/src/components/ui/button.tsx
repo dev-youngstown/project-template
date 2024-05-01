@@ -1,9 +1,9 @@
-import { Button as MUIButton, ButtonProps } from "@mui/material";
 import { styles } from "../../config/project";
+import { FormButton, FormButtonProps } from "@rhf-kit/mui";
 
-export const Button = ({ children, ...props }: ButtonProps) => {
+export const Button = ({ children, ...props }: FormButtonProps) => {
   return (
-    <MUIButton
+    <FormButton
       variant="contained"
       sx={{
         background: styles.primaryColor,
@@ -15,7 +15,7 @@ export const Button = ({ children, ...props }: ButtonProps) => {
       {...props}
     >
       {children}
-    </MUIButton>
+    </FormButton>
   );
 };
 
