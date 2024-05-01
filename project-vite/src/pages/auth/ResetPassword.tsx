@@ -1,15 +1,18 @@
 import project from "../../config/project";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FormBox, FormScreenContainer } from "../../components/forms/container";
 import Button from "../../components/ui/button";
 import Link from "../../components/ui/link";
 import { resetPassword } from "../../api/auth";
 import { useAsync } from "@react-hookz/web";
-import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useAuth } from "../../components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FormTextField } from "../../components/forms/inputs";
+import {
+  FormContainer,
+  FormPasswordElement,
+  FormTextFieldElement,
+} from "@rhf-kit/mui";
 
 interface FormData {
   resetToken: string;
@@ -22,14 +25,12 @@ const ResetPassword = () => {
   const [resetPasswordState, resetPasswordActions] = useAsync(resetPassword);
   const navigate = useNavigate();
 
-  const { control, watch, handleSubmit } = useForm<FormData>();
-
-  const onSubmit = handleSubmit((data: FormData) => {
+  const onSubmit = (data: FormData) => {
     resetPasswordActions.execute({
       token: data.resetToken,
       new_password: data.newPassword,
     });
-  });
+  };
 
   useEffect(() => {
     if (authenticated) {
@@ -40,56 +41,62 @@ const ResetPassword = () => {
   return (
     <FormScreenContainer>
       <FormBox>
-        <h1 style={{ textAlign: "center" }}>Reset Password</h1>
-        <p>
-          Enter the reset token and your new password below to reset your
-          password.
-        </p>
-        <FormTextField
-          required
-          fullWidth
-          label="Reset Token"
-          margin="normal"
-          control={control}
-          rules={{ required: "Reset Token is required" }}
-          name="resetToken"
-        />
-        <FormTextField
-          required
-          fullWidth
-          label="New Password"
-          margin="normal"
-          control={control}
-          rules={{ required: "New Password is required" }}
-          name="newPassword"
-        />
-        <FormTextField
-          required
-          fullWidth
-          label="Confirm New Password"
-          margin="normal"
-          control={control}
-          rules={{
-            required: "Confirm New Password is required",
-            validate: (value) =>
-              value === watch("newPassword") || "Passwords do not match",
+        <FormContainer
+          defaultValues={{
+            resetToken: "",
+            newPassword: "",
+            confirmNewPassword: "",
           }}
-          name="confirmNewPassword"
-        />
-        <Button
-          type="submit"
-          fullWidth
-          disabled={resetPasswordState.status === "loading"}
-          onClick={onSubmit}
+          onSuccess={onSubmit}
         >
-          Reset Password
-        </Button>
-        <p>
-          <Link href="/login">Back to Sign In</Link>
-        </p>
+          <Typography
+            variant={"h4"}
+            fontWeight={600}
+            textAlign={"center"}
+            gutterBottom
+          >
+            Reset Password
+          </Typography>
+          <Typography gutterBottom>
+            Enter the reset token and your new password below to reset your
+            password.
+          </Typography>
+          <FormTextFieldElement
+            name={"resetToken"}
+            required
+            fullWidth
+            label="Reset Token"
+            margin="normal"
+          />
+          <FormPasswordElement
+            name={"newPassword"}
+            required
+            fullWidth
+            label="New Password"
+            margin="normal"
+          />
+          <FormPasswordElement
+            name={"confirmNewPassword"}
+            required
+            fullWidth
+            label="Confirm New Password"
+            margin="normal"
+            rules={{
+              required: "Confirm New Password is required",
+              validate: (value, formValues) =>
+                value === formValues.newPassword || "Passwords do not match",
+            }}
+          />
+          <Button fullWidth disabled={resetPasswordState.status === "loading"}>
+            Reset Password
+          </Button>
+          <Typography mt={2}>
+            <Link href="/login">Back to Sign In</Link>
+          </Typography>
+        </FormContainer>
       </FormBox>
       <Box color="GrayText">
-        <p>© 2024 {project.name} - Terms of Use</p>
+        <Typography mt={2}>© 2024 {project.name} - Terms of Use</Typography>
       </Box>
     </FormScreenContainer>
   );

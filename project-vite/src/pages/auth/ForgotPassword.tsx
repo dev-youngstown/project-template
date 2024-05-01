@@ -1,7 +1,6 @@
 import project from "../../config/project";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { FormBox, FormScreenContainer } from "../../components/forms/container";
-import { useForm } from "react-hook-form";
 import Button from "../../components/ui/button";
 import Link from "../../components/ui/link";
 import { useAsync } from "@react-hookz/web";
@@ -11,7 +10,7 @@ import { useEffect } from "react";
 import { useAuth } from "../../components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
-import { FormTextField } from "../../components/forms/inputs";
+import { FormContainer, FormEmailElement } from "@rhf-kit/mui";
 
 interface FormData {
   email: string;
@@ -22,15 +21,13 @@ const ForgotPassword = () => {
   const [forgotPasswordState, forgotPasswordActions] = useAsync(forgotPassword);
   const navigate = useNavigate();
 
-  const { control, handleSubmit } = useForm<FormData>();
-
-  const onSubmit = handleSubmit((data: FormData) => {
+  const onSubmit = (data: FormData) => {
     forgotPasswordActions.execute(data.email);
     enqueueSnackbar("Success! Please check your email for the reset link.", {
       variant: "success",
     });
     navigate("/password/reset");
-  });
+  };
 
   useEffect(() => {
     if (authenticated) {
@@ -41,35 +38,37 @@ const ForgotPassword = () => {
   return (
     <FormScreenContainer>
       <FormBox>
-        <Link href="/login">
-          <ArrowLeft size={16} />
-          Back
-        </Link>
-        <h1 style={{ textAlign: "center" }}>Forgot Password</h1>
-        <p>
-          Enter your email address below and we'll send you a link to reset your
-          password.
-        </p>
-        <FormTextField
-          required
-          fullWidth
-          label="Email"
-          margin="normal"
-          control={control}
-          rules={{ required: "Email is required" }}
-          name="email"
-        />
-        <Button
-          type="submit"
-          fullWidth
-          disabled={forgotPasswordState.status === "loading"}
-          onClick={onSubmit}
-        >
-          Submit
-        </Button>
+        <FormContainer defaultValues={{ email: "" }} onSuccess={onSubmit}>
+          <Link href="/login">
+            <ArrowLeft size={16} />
+            Back
+          </Link>
+          <Typography
+            variant={"h4"}
+            fontWeight={600}
+            textAlign={"center"}
+            gutterBottom
+          >
+            Forgot Password
+          </Typography>
+          <Typography gutterBottom>
+            Enter your email address below and we'll send you a link to reset
+            your password.
+          </Typography>
+          <FormEmailElement
+            name="email"
+            required
+            fullWidth
+            label="Email Address"
+            margin="normal"
+          />
+          <Button fullWidth loading={forgotPasswordState.status === "loading"}>
+            Submit
+          </Button>
+        </FormContainer>
       </FormBox>
       <Box color="GrayText">
-        <p>© 2024 {project.name} - Terms of Use</p>
+        <Typography mt={2}>© 2024 {project.name} - Terms of Use</Typography>
       </Box>
     </FormScreenContainer>
   );

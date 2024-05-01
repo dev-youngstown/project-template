@@ -1,15 +1,18 @@
 import project from "../../config/project";
 import Link from "../../components/ui/link";
-import Button from "../../components/ui/button";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useAsync } from "@react-hookz/web";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { login as APILogin } from "../../api/auth";
 import { FormBox, FormScreenContainer } from "../../components/forms/container";
 import { useAuth } from "../../components/context/AuthContext";
-import { FormTextField } from "../../components/forms/inputs";
+import {
+  FormContainer,
+  FormEmailElement,
+  FormPasswordElement,
+} from "@rhf-kit/mui";
+import Button from "../../components/ui/button.tsx";
 
 type FormData = {
   email: string;
@@ -21,16 +24,14 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginState, loginActions] = useAsync(APILogin);
   const [status, setStatus] = useState<"not-executed" | "loading">(
-    "not-executed"
+    "not-executed",
   );
   const [error, setError] = useState<boolean>(false);
 
-  const { handleSubmit, control } = useForm<FormData>();
-
-  const onSubmit = handleSubmit((data: FormData) => {
+  const onSubmit = (data: FormData) => {
     setError(false);
     loginActions.execute(data.email, data.password);
-  });
+  };
 
   useEffect(() => {
     if (authenticated) {
@@ -53,60 +54,62 @@ const Login = () => {
   return (
     <FormScreenContainer>
       <FormBox>
-        <h1 style={{ textAlign: "center" }}>Sign In To {project.name}</h1>
-        {error && (
-          <Box
-            sx={{
-              color: "red",
-              textAlign: "center",
-              marginBottom: "1rem",
-            }}
-          >
-            Invalid email or password
-          </Box>
-        )}
-        <FormTextField
-          label="Email Address"
-          margin="normal"
-          required
-          fullWidth
-          control={control}
-          rules={{
-            required: "Email is required",
-            pattern: {
-              value: /\S+@\S+\.\S+/,
-              message: "Please enter a valid email address.",
-            },
-          }}
-          name={"email"}
-        />
-        <FormTextField
-          label="Password"
-          margin="normal"
-          required
-          fullWidth
-          control={control}
-          rules={{ required: "Password is required" }}
-          name={"password"}
-          type={"password"}
-        />
-        <Button
-          disabled={loginState.status === "loading" || status === "loading"}
-          variant="contained"
-          fullWidth
-          onClick={onSubmit}
+        <FormContainer
+          defaultValues={{ email: "", password: "" }}
+          onSuccess={onSubmit}
         >
-          Sign In
-        </Button>
-        <p>
-          Don't have an account? <Link href="/register">Sign Up</Link>
-        </p>
-        <p>
-          <Link href="/password/forgot">Forgot Password?</Link>
-        </p>
+          <Typography
+            variant={"h4"}
+            fontWeight={600}
+            textAlign={"center"}
+            gutterBottom
+          >
+            Sign In To {project.name}
+          </Typography>
+          {error && (
+            <Box
+              sx={{
+                color: "red",
+                textAlign: "center",
+                marginBottom: "1rem",
+              }}
+            >
+              Invalid email or password
+            </Box>
+          )}
+          <FormEmailElement
+            name={"email"}
+            label="Email Address"
+            margin="normal"
+            required
+            fullWidth
+          />
+          <FormPasswordElement
+            name={"password"}
+            label="Password"
+            margin="normal"
+            required
+            fullWidth
+          />
+          <Button
+            loading={loginState.status === "loading" || status === "loading"}
+            variant={"contained"}
+            loadingPosition={"end"}
+            fullWidth
+          >
+            Sign In
+          </Button>
+
+          <Typography mt={1}>
+            Don't have an account? <Link href="/register">Sign Up</Link>
+          </Typography>
+          <Typography mt={2}>
+            <Link href="/password/forgot">Forgot Password?</Link>
+          </Typography>
+        </FormContainer>
       </FormBox>
       <Box color="GrayText">
-        <p>© 2024 {project.name} - Terms of Use</p>
+        <Typography mt={2}>© 2024 {project.name} - Terms of Use</Typography>
       </Box>
     </FormScreenContainer>
   );
