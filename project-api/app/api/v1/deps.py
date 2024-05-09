@@ -1,18 +1,18 @@
 import os
 from typing import Generator
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
-from app import crud, models, schemas
+from app.crud import v1 as crud
+from app.models import v1 as models
+from app.schemas import v1 as schemas
 from app.core import security
 from app.core.config import settings
 from app.db.session import SessionLocal
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_STR}/docs/login")
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_STR}/v1/docs/login")
 
 
 def get_db() -> Generator:

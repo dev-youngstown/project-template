@@ -11,7 +11,7 @@ load_dotenv()
 class Settings(BaseSettings):
     # API information
     API_VERSION: str = "v1"
-    API_STR: str = "/api/" + API_VERSION
+    API_STR: str = "/api"
     SECRET_KEY: str = os.getenv("SECRET_KEY")
 
     # project information

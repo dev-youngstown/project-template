@@ -3,13 +3,9 @@ from typing import Any, Dict, Optional, Union
 from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash, verify_password
-from app.crud.base import CRUDBase
-from app.models.user import User
-from app.schemas.user import UserCreate, UserUpdate
-from fastapi.encoders import jsonable_encoder
-from fastapi import HTTPException
-
-from app import crud
+from app.crud.v1.base import CRUDBase
+from app.models.v1.user import User
+from app.schemas.v1.user import UserCreate, UserUpdate
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):

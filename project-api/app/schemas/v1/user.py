@@ -11,7 +11,7 @@ class UserBase(BaseModel):
     is_disabled: Optional[bool] = False
 
 
-class UserCreate(BaseModel):
+class UserCreate(UserBase):
     first_name: str
     last_name: str
     email: EmailStr

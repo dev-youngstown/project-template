@@ -1,9 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 import sentry_sdk
-from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 
-from app.api.api import api_router
+from app.api import v1_router
 from app.core.config import settings
 
 if settings.SECRET_KEY == "":
@@ -17,7 +16,9 @@ sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
 )
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.PROJECT_NAME
+)
 
 # Set all CORS enabled origins
 app.add_middleware(
@@ -29,4 +30,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_router, prefix=settings.API_STR)
+app.include_router(v1_router, prefix=settings.API_STR)
