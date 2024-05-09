@@ -17,7 +17,8 @@ sentry_sdk.init(
 )
 
 app = FastAPI(
-    title=settings.PROJECT_NAME
+    title=settings.PROJECT_NAME,
+    swagger_ui_parameters={"persistAuthorization": True},
 )
 
 # Set all CORS enabled origins
