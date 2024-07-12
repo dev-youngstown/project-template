@@ -1,5 +1,5 @@
 import os
-from typing import Generator
+from typing import Generator, Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -23,12 +23,15 @@ def get_db() -> Generator:
         db.close()
 
 
-def get_development_user(db: Session = Depends(get_db)) -> models.User:
+db_dep = Annotated[Session, Depends(get_db)]
+
+
+def get_development_user(db: db_dep) -> models.User:
     return db.query(models.User).first()
 
 
 def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+    db: db_dep, token: Annotated[str, Depends(reusable_oauth2)]
 ) -> models.User:
     if os.getenv("DEV_MODE"):
         return get_development_user(db)
@@ -49,8 +52,11 @@ def get_current_user(
         return user
 
 
+current_user_dep = Annotated[models.User, Depends(get_current_user)]
+
+
 def get_current_active_user(
-    current_user: models.User = Depends(get_current_user),
+    current_user: current_user_dep,
 ) -> models.User:
     if crud.user.is_disabled(current_user):
         raise HTTPException(status_code=400, detail="User has been disabled")
@@ -58,7 +64,7 @@ def get_current_active_user(
 
 
 def get_current_active_superuser(
-    current_user: models.User = Depends(get_current_user),
+    current_user: current_user_dep,
 ) -> models.User:
     if not crud.user.is_admin(current_user):
         raise HTTPException(

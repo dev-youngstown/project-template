@@ -1,5 +1,6 @@
+from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class UserBase(BaseModel):
@@ -38,10 +39,11 @@ class UserUpdatePassword(BaseModel):
 
 
 class UserInDBBase(UserBase):
-    id: Optional[int] = None
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        orm_mode = True
+    id: Optional[int] = None
+    created_at: datetime
+    updated_at: datetime
 
 
 class User(UserInDBBase):
