@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 import sentry_sdk
 
 from app.api import v1_router
