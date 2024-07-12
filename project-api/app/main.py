@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import sentry_sdk
+from fastapi_pagination import add_pagination
 
 from app.api import v1_router
 from app.core.config import settings
@@ -32,3 +33,6 @@ app.add_middleware(
 )
 
 app.include_router(v1_router, prefix=settings.API_STR)
+
+# Add pagination to FastAPI
+add_pagination(app)
