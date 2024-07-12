@@ -1,7 +1,7 @@
 from datetime import timedelta
-from typing import Any
+from typing import Any, Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, status, Request, Path, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -24,11 +24,14 @@ from postmarker.core import PostmarkClient
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
+# give type alias to db type
+db_dep = Annotated[Session, Depends(deps.get_db)]
+
 
 # register
 @router.post("/user/register", response_model=schemas.User)
 def create_user(
-        *, db: Session = Depends(deps.get_db), user_in: schemas.UserCreate
+        *, db: db_dep, user_in: schemas.UserCreate
 ) -> Any:
     user_in.email = user_in.email.lower()
     user = crud.user.get_by_email(db, email=user_in.email)
@@ -44,9 +47,9 @@ def create_user(
 # log in with email and password (not OAuth2)
 @router.post("/user/login", response_model=schemas.Token)
 def login_access_token(
-        email: EmailStr = Body(...),
-        password: str = Body(...),
-        db: Session = Depends(deps.get_db),
+        db: db_dep,
+        email: Annotated[EmailStr, Body(...)],
+        password: Annotated[str, Body(...)],
 ) -> Any:
     """
     Login endpoint to get an access token for future requests. Accepts application/json.
@@ -73,9 +76,9 @@ def login_access_token(
 # refresh access token
 @router.post("/token/refresh", response_model=schemas.Token)
 def refresh_access_token(
+        db: db_dep,
         obj_in: schemas.RefreshToken,
-        db: Session = Depends(deps.get_db),
-        current_user: models.User = Depends(deps.get_current_active_user),
+        current_user: Annotated[models.User, Depends(deps.get_current_active_user)],
 ) -> Any:
     """
     Refreshes access token with refresh token from Authorization header
@@ -103,7 +106,7 @@ def refresh_access_token(
 # log in with OAuth2
 @router.post("/docs/login", response_model=schemas.Token)
 def login_access_token(
-        db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
+        db: db_dep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Any:
     """
     OAuth2 compatible token login, get an access token and refresh token for future requests. Accepts application/x-www-form-urlencoded and is for using the docs authorize feature.
@@ -131,7 +134,7 @@ def login_access_token(
 # password recovery to send email
 @router.post("/user/password/forgot")
 def recover_password(
-        *, email: str, request: Request, db: Session = Depends(deps.get_db)
+        *, email: Annotated[EmailStr, Query(description="The email of account to recover password for")], request: Request, db: db_dep
 ) -> Any:
     user = crud.user.get_by_email(db, email=email)
 
@@ -167,9 +170,9 @@ def recover_password(
 # reset password
 @router.post("/user/password/reset", response_model=schemas.Msg)
 def reset_password(
-        token: str = Body(...),
-        new_password: str = Body(...),
-        db: Session = Depends(deps.get_db),
+        db: db_dep,
+        token: Annotated[str, Body(description="The password reset token")],
+        new_password: Annotated[str, Body(description="The new password")],
 ) -> Any:
     email = verify_password_reset_token(token)
     if not email:
@@ -193,10 +196,10 @@ def reset_password(
 @router.put("/user/password/change", response_model=schemas.Msg)
 def change_password(
         *,
-        db: Session = Depends(deps.get_db),
-        current_password: str = Body(...),
-        new_password: str = Body(...),
-        current_user: models.User = Depends(deps.get_current_active_user),
+        db: db_dep,
+        current_password: Annotated[str, Body(description="The current password")],
+        new_password: Annotated[str, Body(description="The new password")],
+        current_user: Annotated[models.User, Depends(deps.get_current_active_user)],
         request: Request,
 ) -> Any:
     if not crud.user.authenticate(

@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import Any, List, Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Path
 from sqlalchemy.orm import Session
 
 from app.crud import v1 as crud
@@ -10,14 +10,21 @@ from app.api.v1 import deps
 
 router = APIRouter()
 
+# give type alias to current_user type
+current_user_dep = Annotated[models.User, Depends(deps.get_current_active_superuser)]
+
+# give type alias to db type
+db_dep = Annotated[Session, Depends(deps.get_db)]
+
 
 # get all users
 @router.get("/users", response_model=List[schemas.User])
 def read_users(
-    db: Session = Depends(deps.get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        current_user: current_user_dep,
+        db: db_dep,
+        skip: int = 0,
+        limit: int = 100,
+
 ) -> Any:
     users = crud.user.get_multi(db, skip=skip, limit=limit)
     return users
@@ -26,11 +33,10 @@ def read_users(
 # update user by id
 @router.put("/users/{id}", response_model=schemas.User)
 def update_user(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    user_in: schemas.UserUpdateAdmin,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+        current_user: current_user_dep,
+        id: Annotated[int, Path(description="The ID of the user to update", ge=1)],  # ge = greater than or equal to
+        user_in: schemas.UserUpdateAdmin,
+        db: db_dep,
 ) -> Any:
     user = crud.user.get(db, id=id)
     if not user:
@@ -43,13 +49,12 @@ def update_user(
 
 
 # delete user by id
-@router.delete("/users/{id}", response_model=schemas.User)
+@router.delete("/users/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(
-    *,
-    db: Session = Depends(deps.get_db),
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
-) -> Any:
+        current_user: current_user_dep,
+        id: Annotated[int, Path(description="The ID of the user to delete", ge=1)],
+        db: db_dep,
+):
     user = crud.user.get(db, id=id)
     if not user:
         raise HTTPException(
@@ -58,15 +63,15 @@ def delete_user(
         )
 
     crud.user.remove(db, id=id)
-    return user
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # get users by id
 @router.get("/users/{id}", response_model=schemas.User)
 def read_user_by_id(
-    id: int,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
-    db: Session = Depends(deps.get_db),
+        current_user: current_user_dep,
+        id: Annotated[int, Path(description="The ID of the user to get", ge=1)],
+        db: db_dep,
 ) -> Any:
     user = crud.user.get(db, id=id)
     if user == current_user:
