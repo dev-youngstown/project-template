@@ -1,5 +1,5 @@
-from typing import Any
-from fastapi import APIRouter, Depends, HTTPException, Request
+from typing import Any, Annotated
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 from app.crud import v1 as crud
 from app.models import v1 as models
@@ -11,13 +11,14 @@ from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+db_dep = Annotated[Session, Depends(deps.get_db)]
+current_user_dep = Annotated[models.User, Depends(deps.get_current_active_user)]
 
 
 # get current user
 @router.get("", response_model=schemas.User)
 def read_user_me(
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
+    current_user: current_user_dep,
 ) -> Any:
     return current_user
 
@@ -26,10 +27,9 @@ def read_user_me(
 @router.put("", response_model=schemas.User)
 def update_user_me(
     *,
-    db: Session = Depends(deps.get_db),
+    db: db_dep,
     user_in: schemas.UserUpdate,
-    current_user: models.User = Depends(deps.get_current_active_user),
-    request: Request,
+    current_user: current_user_dep,
 ) -> Any:
     if user_in.email:
         user_in.email = user_in.email.lower()
@@ -48,11 +48,11 @@ def update_user_me(
 
 
 # delete user by id
-@router.delete("", response_model=schemas.User)
+@router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(
     *,
-    db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_active_user),
-) -> Any:
+    db: db_dep,
+    current_user: current_user_dep,
+):
     crud.user.remove(db, id=current_user.id)
-    return {"message": "User deleted"}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
