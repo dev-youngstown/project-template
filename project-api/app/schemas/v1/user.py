@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr, ConfigDict
 
@@ -41,6 +42,8 @@ class UserInDBBase(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: Optional[int] = None
+    created_at: datetime
+    updated_at: datetime
 
 
 class User(UserInDBBase):
