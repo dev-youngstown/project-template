@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { IUser, getProfile } from "../../api/profile";
+import { IUser, getProfile } from "@/api/profile";
 
 // TODO: remove console logs
 

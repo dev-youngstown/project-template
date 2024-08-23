@@ -1,12 +1,12 @@
-import project from "../../config/project";
+import project from "@/config/project";
 import { ArrowLeft } from "lucide-react";
 import { Box, Typography } from "@mui/material";
-import Link from "../../components/ui/link";
-import { FormBox, FormScreenContainer } from "../../components/forms/container";
+import Link from "@/components/ui/link";
+import { FormBox, FormScreenContainer } from "@/components/forms/container";
 import { useAsync } from "@react-hookz/web";
-import { registerUser } from "../../api/auth";
+import { registerUser } from "@/api/auth";
 import { useEffect } from "react";
-import { useAuth } from "../../components/context/AuthContext";
+import { useAuth } from "@/components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   FormContainer,
@@ -14,7 +14,7 @@ import {
   FormPasswordElement,
   FormTextFieldElement,
 } from "@rhf-kit/mui";
-import Button from "../../components/ui/button.tsx";
+import Button from "@/components/ui/button.tsx";
 
 interface FormData {
   firstName: string;

@@ -1,12 +1,12 @@
-import project from "../../config/project";
+import project from "@/config/project";
 import { Box, Typography } from "@mui/material";
-import { FormBox, FormScreenContainer } from "../../components/forms/container";
-import Button from "../../components/ui/button";
-import Link from "../../components/ui/link";
-import { resetPassword } from "../../api/auth";
+import { FormBox, FormScreenContainer } from "@/components/forms/container";
+import Button from "@/components/ui/button";
+import Link from "@/components/ui/link";
+import { resetPassword } from "@/api/auth";
 import { useAsync } from "@react-hookz/web";
 import { useEffect } from "react";
-import { useAuth } from "../../components/context/AuthContext";
+import { useAuth } from "@/components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   FormContainer,

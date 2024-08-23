@@ -1,4 +1,4 @@
-import { styles } from "../../config/project";
+import { styles } from "@/config/project";
 import { FormButton, FormButtonProps } from "@rhf-kit/mui";
 
 export const Button = ({ children, ...props }: FormButtonProps) => {

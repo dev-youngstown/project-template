@@ -1,18 +1,18 @@
-import project from "../../config/project";
-import Link from "../../components/ui/link";
+import project from "@/config/project";
+import Link from "@/components/ui/link";
 import { Box, Typography } from "@mui/material";
 import { useAsync } from "@react-hookz/web";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login as APILogin } from "../../api/auth";
-import { FormBox, FormScreenContainer } from "../../components/forms/container";
-import { useAuth } from "../../components/context/AuthContext";
+import { login as APILogin } from "@/api/auth";
+import { FormBox, FormScreenContainer } from "@/components/forms/container";
+import { useAuth } from "@/components/context/AuthContext";
 import {
   FormContainer,
   FormEmailElement,
   FormPasswordElement,
 } from "@rhf-kit/mui";
-import Button from "../../components/ui/button.tsx";
+import Button from "@/components/ui/button.tsx";
 
 type FormData = {
   email: string;
@@ -24,7 +24,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginState, loginActions] = useAsync(APILogin);
   const [status, setStatus] = useState<"not-executed" | "loading">(
-    "not-executed",
+    "not-executed"
   );
   const [error, setError] = useState<boolean>(false);
 
