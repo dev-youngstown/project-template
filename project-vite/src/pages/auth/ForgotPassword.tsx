@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
 import Button from "@/components/ui/button";
 import Link from "@/components/ui/link";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "@/api/auth";
 import { ArrowLeft } from "lucide-react";
 import { useEffect } from "react";
@@ -18,11 +18,13 @@ interface FormData {
 
 const ForgotPassword = () => {
   const { authenticated } = useAuth();
-  const [forgotPasswordState, forgotPasswordActions] = useAsync(forgotPassword);
   const navigate = useNavigate();
+  const forgotPasswordMutation = useMutation({
+    mutationFn: forgotPassword,
+  });
 
   const onSubmit = (data: FormData) => {
-    forgotPasswordActions.execute(data.email);
+    forgotPasswordMutation.mutate(data.email);
     enqueueSnackbar("Success! Please check your email for the reset link.", {
       variant: "success",
     });
@@ -62,7 +64,7 @@ const ForgotPassword = () => {
             label="Email Address"
             margin="normal"
           />
-          <Button fullWidth loading={forgotPasswordState.status === "loading"}>
+          <Button fullWidth loading={forgotPasswordMutation.isPending}>
             Submit
           </Button>
         </FormContainer>

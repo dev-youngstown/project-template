@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Box, Typography } from "@mui/material";
 import Link from "@/components/ui/link";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/api/auth";
 import { useEffect } from "react";
 import { useAuth } from "@/components/context/AuthContext";
@@ -26,12 +26,14 @@ interface FormData {
 
 const Register = () => {
   const { authenticated } = useAuth();
-  const [registerState, registerActions] = useAsync(registerUser);
   const navigate = useNavigate();
+  const registerMutation = useMutation({
+    mutationFn: registerUser,
+  });
 
   const onSubmit = (data: FormData) => {
     console.log(data);
-    registerActions.execute({
+    registerMutation.mutate({
       first_name: data.firstName,
       last_name: data.lastName,
       email: data.email,
@@ -109,7 +111,7 @@ const Register = () => {
           <Button
             fullWidth
             loadingPosition={"end"}
-            loading={registerState.status === "loading"}
+            loading={registerMutation.isPending}
             variant={"contained"}
           >
             Sign Up

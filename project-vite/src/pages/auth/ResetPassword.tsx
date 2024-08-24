@@ -4,7 +4,7 @@ import { FormBox, FormScreenContainer } from "@/components/forms/container";
 import Button from "@/components/ui/button";
 import Link from "@/components/ui/link";
 import { resetPassword } from "@/api/auth";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuth } from "@/components/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -22,11 +22,13 @@ interface FormData {
 
 const ResetPassword = () => {
   const { authenticated } = useAuth();
-  const [resetPasswordState, resetPasswordActions] = useAsync(resetPassword);
   const navigate = useNavigate();
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+  });
 
   const onSubmit = (data: FormData) => {
-    resetPasswordActions.execute({
+    resetPasswordMutation.mutate({
       token: data.resetToken,
       new_password: data.newPassword,
     });
@@ -87,7 +89,7 @@ const ResetPassword = () => {
                 value === formValues.newPassword || "Passwords do not match",
             }}
           />
-          <Button fullWidth disabled={resetPasswordState.status === "loading"}>
+          <Button fullWidth disabled={resetPasswordMutation.isPending}>
             Reset Password
           </Button>
           <Typography mt={2}>

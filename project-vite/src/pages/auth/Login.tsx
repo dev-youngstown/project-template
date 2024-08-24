@@ -1,7 +1,7 @@
 import project from "@/config/project";
 import Link from "@/components/ui/link";
 import { Box, Typography } from "@mui/material";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as APILogin } from "@/api/auth";
@@ -22,15 +22,17 @@ type FormData = {
 const Login = () => {
   const { session, authenticated } = useAuth();
   const navigate = useNavigate();
-  const [loginState, loginActions] = useAsync(APILogin);
-  const [status, setStatus] = useState<"not-executed" | "loading">(
-    "not-executed"
-  );
   const [error, setError] = useState<boolean>(false);
+  const loginMutation = useMutation({
+    mutationFn: (data: FormData) => APILogin(data.email, data.password),
+  });
 
   const onSubmit = (data: FormData) => {
     setError(false);
-    loginActions.execute(data.email, data.password);
+    loginMutation.mutate({
+      email: data.email,
+      password: data.password,
+    });
   };
 
   useEffect(() => {
@@ -40,16 +42,13 @@ const Login = () => {
   }, [authenticated, navigate]);
 
   useEffect(() => {
-    if (loginState.status === "success" && loginState.result) {
-      if (status === "not-executed") {
-        setStatus("loading");
-        session.create(loginState.result.access_token);
-      }
+    if (loginMutation.isSuccess) {
+      session.create(loginMutation.data.access_token);
     }
-    if (loginState.status === "error") {
+    if (loginMutation.isError) {
       setError(true);
     }
-  }, [loginState, navigate, session, status]);
+  }, [navigate, session, loginMutation]);
 
   return (
     <FormScreenContainer>
@@ -92,7 +91,7 @@ const Login = () => {
             fullWidth
           />
           <Button
-            loading={loginState.status === "loading" || status === "loading"}
+            loading={loginMutation.isPending}
             variant={"contained"}
             loadingPosition={"end"}
             fullWidth
