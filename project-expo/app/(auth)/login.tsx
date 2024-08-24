@@ -1,12 +1,12 @@
-import { useAuth } from "../../components/context/AuthProvider";
+import { useAuth } from "@/components/context/AuthProvider";
 import { useAsync } from "@react-hookz/web";
-import { login } from "../../api/auth";
+import { login } from "@/api/auth";
 import { useState } from "react";
 import { Redirect, Link } from "expo-router";
 import { Text, Heading, VStack, LinkText } from "@gluestack-ui/themed";
-import FormContainer from "../../components/forms/container";
-import Button from "../../components/ui/button";
-import { ControlledInputField } from "../../components/forms/inputs";
+import FormContainer from "@/components/forms/container";
+import Button from "@/components/ui/button";
+import { ControlledInputField } from "@/components/forms/inputs";
 import { useForm } from "react-hook-form";
 
 interface FormData {

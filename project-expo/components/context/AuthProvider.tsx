@@ -3,8 +3,8 @@ import axios from "axios";
 import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { createContext, useContext, useEffect, useState } from "react";
-import { refreshTokenRequest } from "../../api/auth";
-import { UserModel, getUser } from "../../api/profile";
+import { refreshTokenRequest } from "@/api/auth";
+import { UserModel, getUser } from "@/api/profile";
 
 // Prevent hiding the splash screen after the navigation has mounted
 SplashScreen.preventAutoHideAsync();

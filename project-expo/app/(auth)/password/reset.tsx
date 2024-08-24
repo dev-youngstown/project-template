@@ -9,13 +9,13 @@ import {
   ToastTitle,
   ToastDescription,
 } from "@gluestack-ui/themed";
-import FormContainer from "../../../components/forms/container";
+import FormContainer from "@/components/forms/container";
 import { useLocalSearchParams, router } from "expo-router";
 import { useEffect } from "react";
 import { useAsync } from "@react-hookz/web";
-import { resetPassword } from "../../../api/auth";
+import { resetPassword } from "@/api/auth";
 import { useForm, Controller } from "react-hook-form";
-import { ControlledInputField } from "../../../components/forms/inputs";
+import { ControlledInputField } from "@/components/forms/inputs";
 
 interface FormData {
   reset_token: string;

@@ -1,13 +1,13 @@
 import { Heading, VStack } from "@gluestack-ui/themed";
-import { useAuth } from "../../components/context/AuthProvider";
+import { useAuth } from "@/components/context/AuthProvider";
 import { useAsync } from "@react-hookz/web";
-import { userRegister, login } from "../../api/auth";
+import { userRegister, login } from "@/api/auth";
 import { useForm } from "react-hook-form";
 import { Redirect } from "expo-router";
-import FormContainer from "../../components/forms/container";
+import FormContainer from "@/components/forms/container";
 import { useEffect, useState } from "react";
-import Button from "../../components/ui/button";
-import { ControlledInputField } from "../../components/forms/inputs";
+import Button from "@/components/ui/button";
+import { ControlledInputField } from "@/components/forms/inputs";
 
 interface FormData {
   email: string;

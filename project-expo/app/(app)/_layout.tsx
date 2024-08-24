@@ -1,5 +1,5 @@
 import { Slot, router } from "expo-router";
-import { useAuth } from "../../components/context/AuthProvider";
+import { useAuth } from "@/components/context/AuthProvider";
 
 export function AppLayout() {
   const { authenticated } = useAuth();

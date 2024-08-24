@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { useAuth } from "../components/context/AuthProvider";
+import { useAuth } from "@/components/context/AuthProvider";
 import {
   Heading,
   Button,

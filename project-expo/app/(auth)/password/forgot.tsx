@@ -1,4 +1,4 @@
-import { forgotPassword } from "../../../api/auth";
+import { forgotPassword } from "@/api/auth";
 import { useAsync } from "@react-hookz/web";
 import {
   Text,
@@ -11,9 +11,9 @@ import {
   ToastTitle,
   ToastDescription,
 } from "@gluestack-ui/themed";
-import FormContainer from "../../../components/forms/container";
+import FormContainer from "@/components/forms/container";
 import { router } from "expo-router";
-import { ControlledInputField } from "../../../components/forms/inputs";
+import { ControlledInputField } from "@/components/forms/inputs";
 import { useForm } from "react-hook-form";
 
 interface FormData {

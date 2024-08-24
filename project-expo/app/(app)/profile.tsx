@@ -6,7 +6,7 @@ import {
   Box,
   VStack,
 } from "@gluestack-ui/themed";
-import { useAuth } from "../../components/context/AuthProvider";
+import { useAuth } from "@/components/context/AuthProvider";
 import { Link } from "expo-router";
 
 export default function Profile() {
