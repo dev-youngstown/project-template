@@ -1,5 +1,5 @@
 import { forgotPassword } from "@/api/auth";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import {
   Text,
   Heading,
@@ -22,13 +22,14 @@ interface FormData {
 
 export default function PasswordForgot() {
   const toast = useToast();
-  const [forgotPasswordRequest, forgotPasswordActions] =
-    useAsync(forgotPassword);
+  const forgotPasswordMutation = useMutation({
+    mutationFn: forgotPassword,
+  });
 
   const { handleSubmit, control } = useForm<FormData>();
 
   const onSubmit = handleSubmit((data: FormData) => {
-    forgotPasswordActions.execute(data.email);
+    forgotPasswordMutation.mutate(data.email);
     toast.show({
       placement: "bottom",
       render: ({ id }) => {

@@ -1,4 +1,4 @@
-import { useAsync } from "@react-hookz/web";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -30,19 +30,27 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: any) => {
-  const [userRequest, userActions] = useAsync(async () => {
-    const response = await getUser();
-    return response;
-  });
+  const queryClient = useQueryClient();
 
-  const [refreshRequest, refreshActions] = useAsync(async () => {
-    const response = await getUser();
-    return response;
+  const profileQuery = useQuery({
+    queryKey: ["profile"],
+    queryFn: getUser,
+    enabled: false,
   });
-
-  const [tokenRequest, tokenActions] = useAsync(async (refreshToken: any) => {
-    const response = await refreshTokenRequest(refreshToken);
-    return response;
+  const refreshProfileQuery = useQuery({
+    queryKey: ["refreshProfile"],
+    queryFn: getUser,
+    enabled: false,
+  });
+  const refreshTokenMutation = useMutation({
+    mutationFn: refreshTokenRequest,
+    onSuccess: (data) => {
+      setAuthTokens(data.access_token, data.refresh_token);
+    },
+    onError: (error) => {
+      console.error(error);
+      endSession();
+    },
   });
 
   const [authenticated, setAuthenticated] = useState(false);
@@ -74,22 +82,25 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const setAuthTokens = async (token: string, refresh_token: string) => {
-    await SecureStore.setItemAsync(TOKEN_KEY, tokenRequest.result.access_token);
-    await SecureStore.setItemAsync(
-      REFRESH_TOKEN_KEY,
-      tokenRequest.result.refresh_token
-    );
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refresh_token);
   };
 
   const loadSession = async () => {
     console.log("loading session");
     const token = await SecureStore.getItemAsync(TOKEN_KEY);
+    console.log("token", token);
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      userActions.execute();
+      profileQuery.refetch();
     } else {
+      console.log("no token");
       axios.defaults.headers.common["Authorization"] = "";
-      userActions.execute();
+      if (profileQuery.isFetched) {
+        queryClient.invalidateQueries();
+        profileQuery.refetch();
+      }
+      handleAuthentication(false);
     }
   };
 
@@ -98,14 +109,15 @@ export const AuthProvider = ({ children }: any) => {
     if (!refreshToken) {
       return;
     }
-    tokenActions.execute(refreshToken);
+    refreshTokenMutation.mutate(refreshToken);
   };
 
   const refreshSession = async () => {
-    refreshActions.execute();
+    refreshProfileQuery.refetch();
   };
 
   const endSession = async () => {
+    setAuthenticated(false);
     axios.defaults.headers.common["Authorization"] = "";
     await Promise.all([
       await SecureStore.deleteItemAsync(TOKEN_KEY),
@@ -131,42 +143,32 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   useEffect(() => {
-    if (userRequest.status === "not-executed" && !userRequest.result) {
+    if (!profileQuery.isFetched) {
       loadSession();
     }
   }, []);
 
   useEffect(() => {
-    if (userRequest.status === "success" && userRequest.result) {
+    if (profileQuery.isSuccess && !profileQuery.isFetching) {
       handleAuthentication(true);
-    } else {
+    }
+    if (profileQuery.isError) {
       handleAuthentication(false);
     }
-  }, [userRequest.status, userRequest.result]);
-
-  useEffect(() => {
-    if (tokenRequest.status === "success" && tokenRequest.result) {
-      setAuthTokens(
-        tokenRequest.result.access_token,
-        tokenRequest.result.refresh_token
-      );
-    } else if (tokenRequest.status === "error") {
-      endSession();
-    }
-  }, [tokenRequest.status, tokenRequest.result]);
+  }, [profileQuery, refreshProfileQuery]);
 
   // only show loading screen once on initial load (need to set a 1 time state)
   useEffect(() => {
-    if (userRequest.status !== "loading" && initialLoad) {
+    if (!profileQuery.isLoading && initialLoad) {
       SplashScreen.hideAsync();
     }
-  }, [userRequest.status]);
+  }, [profileQuery.isLoading, initialLoad]);
 
   const value = {
     authenticated: authenticated,
-    user: (refreshRequest.result
-      ? refreshRequest.result
-      : userRequest.result) as UserModel,
+    user: (refreshProfileQuery.data
+      ? refreshProfileQuery.data
+      : profileQuery.data) as UserModel,
     session: session,
   };
 

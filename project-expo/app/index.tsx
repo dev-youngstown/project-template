@@ -15,6 +15,8 @@ import * as Sentry from "sentry-expo";
 export default function Home() {
   const { session, authenticated, user } = useAuth();
 
+  console.log("authenticated", authenticated);
+
   // sentry
   Sentry.init({
     dsn: process.env.SENTRY_DSN || "",

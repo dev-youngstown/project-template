@@ -12,9 +12,9 @@ import {
 import FormContainer from "@/components/forms/container";
 import { useLocalSearchParams, router } from "expo-router";
 import { useEffect } from "react";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/api/auth";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ControlledInputField } from "@/components/forms/inputs";
 
 interface FormData {
@@ -25,7 +25,9 @@ interface FormData {
 
 export default function PasswordReset() {
   const { token } = useLocalSearchParams<{ token?: string }>();
-  const [resetPasswordRequest, resetPasswordActions] = useAsync(resetPassword);
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPassword,
+  });
   const toast = useToast();
   const {
     handleSubmit,
@@ -36,7 +38,7 @@ export default function PasswordReset() {
   } = useForm<FormData>();
 
   const onSubmit = handleSubmit((data: FormData) => {
-    resetPasswordActions.execute({
+    resetPasswordMutation.mutate({
       token: data.reset_token,
       new_password: data.password,
     });
@@ -49,7 +51,7 @@ export default function PasswordReset() {
   }, [token]);
 
   useEffect(() => {
-    if (resetPasswordRequest.status === "success") {
+    if (resetPasswordMutation.isSuccess) {
       toast.show({
         placement: "bottom",
         render: ({ id }) => {
@@ -68,7 +70,7 @@ export default function PasswordReset() {
       });
       router.replace("login");
     }
-    if (resetPasswordRequest.status === "error") {
+    if (resetPasswordMutation.isError) {
       toast.show({
         placement: "bottom",
         render: ({ id }) => {
@@ -87,7 +89,7 @@ export default function PasswordReset() {
         },
       });
     }
-  }, [resetPasswordRequest.status]);
+  }, [resetPasswordMutation]);
 
   return (
     <FormContainer>

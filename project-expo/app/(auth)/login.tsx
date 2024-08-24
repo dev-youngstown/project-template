@@ -1,5 +1,5 @@
 import { useAuth } from "@/components/context/AuthProvider";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { login } from "@/api/auth";
 import { useState } from "react";
 import { Redirect, Link } from "expo-router";
@@ -23,10 +23,12 @@ export default function Login() {
     "not-started"
   );
 
-  const [loginRequest, loginActions] = useAsync(login);
+  const loginMutation = useMutation({
+    mutationFn: (data: FormData) => login(data.email, data.password),
+  });
 
   const onSubmit = handleSubmit((data: FormData) => {
-    loginActions.execute(data.email, data.password);
+    loginMutation.mutate(data);
   });
 
   const onLogin = async (access_token: string, refresh_token: string) => {
@@ -34,8 +36,8 @@ export default function Login() {
     session.create(access_token, refresh_token);
   };
 
-  if (loginRequest.status === "success" && loginRequest.result) {
-    const { access_token, refresh_token } = loginRequest.result;
+  if (loginMutation.isSuccess) {
+    const { access_token, refresh_token } = loginMutation.data;
     // usestate to prevent multiple calls
     if (sessionStatus === "not-started") {
       onLogin(access_token, refresh_token);
@@ -50,7 +52,7 @@ export default function Login() {
     <FormContainer>
       <Heading>Welcome back!</Heading>
 
-      {loginRequest.error && loginRequest.status !== "loading" ? (
+      {loginMutation.isError ? (
         <Text color="red">Invalid email or password</Text>
       ) : null}
       <VStack gap="$4" my="$2">
@@ -74,9 +76,7 @@ export default function Login() {
         />
         <Button
           text="Login"
-          loading={
-            loginRequest.status === "loading" || sessionStatus === "loading"
-          }
+          loading={loginMutation.isPending || sessionStatus === "loading"}
           onPress={onSubmit}
         />
       </VStack>
