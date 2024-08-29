@@ -25,10 +25,12 @@ const ForgotPassword = () => {
 
   const onSubmit = (data: FormData) => {
     forgotPasswordMutation.mutate(data.email);
-    enqueueSnackbar("Success! Please check your email for the reset link.", {
-      variant: "success",
-    });
-    navigate("/password/reset");
+    enqueueSnackbar(
+      "If there is an account registered with that email address, we will send a link to reset your password.",
+      {
+        variant: "success",
+      }
+    );
   };
 
   useEffect(() => {
