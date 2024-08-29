@@ -1,20 +1,20 @@
 import {
-  Text,
-  Heading,
-  VStack,
   Button,
   ButtonText,
-  useToast,
+  Heading,
+  Text,
   Toast,
-  ToastTitle,
   ToastDescription,
+  ToastTitle,
+  useToast,
+  VStack,
 } from "@gluestack-ui/themed";
-import FormContainer from "../../../components/forms/container";
-import { useLocalSearchParams, router } from "expo-router";
-import { useEffect } from "react";
 import { useAsync } from "@react-hookz/web";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { resetPassword } from "../../../api/auth";
-import { useForm, Controller } from "react-hook-form";
+import FormContainer from "../../../components/forms/container";
 import { ControlledInputField } from "../../../components/forms/inputs";
 
 interface FormData {
@@ -27,13 +27,7 @@ export default function PasswordReset() {
   const { token } = useLocalSearchParams<{ token?: string }>();
   const [resetPasswordRequest, resetPasswordActions] = useAsync(resetPassword);
   const toast = useToast();
-  const {
-    handleSubmit,
-    watch,
-    control,
-    setValue,
-    formState: { errors },
-  } = useForm<FormData>();
+  const { handleSubmit, watch, control, setValue } = useForm<FormData>();
 
   const onSubmit = handleSubmit((data: FormData) => {
     resetPasswordActions.execute({

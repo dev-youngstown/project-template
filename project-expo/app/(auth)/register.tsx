@@ -23,7 +23,7 @@ export default function Register() {
   const [registerRequest, registerActions] = useAsync(userRegister);
   const [loginRequest, loginActions] = useAsync(login);
   const [sessionStatus, setSessionStatus] = useState<"not-started" | "loading">(
-    "not-started"
+    "not-started",
   );
   const [newUser, setNewUser] = useState<{
     email: string;
@@ -35,7 +35,7 @@ export default function Register() {
       data.email,
       data.password,
       data.first_name,
-      data.last_name
+      data.last_name,
     );
     setNewUser({
       email: data.email,

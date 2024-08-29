@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: any) => {
         await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
       }
       return Promise.reject(error);
-    }
+    },
   );
 
   const handleAuthentication = (authenticated: boolean) => {
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: any) => {
     await SecureStore.setItemAsync(TOKEN_KEY, tokenRequest.result.access_token);
     await SecureStore.setItemAsync(
       REFRESH_TOKEN_KEY,
-      tokenRequest.result.refresh_token
+      tokenRequest.result.refresh_token,
     );
   };
 
@@ -148,7 +148,7 @@ export const AuthProvider = ({ children }: any) => {
     if (tokenRequest.status === "success" && tokenRequest.result) {
       setAuthTokens(
         tokenRequest.result.access_token,
-        tokenRequest.result.refresh_token
+        tokenRequest.result.refresh_token,
       );
     } else if (tokenRequest.status === "error") {
       endSession();

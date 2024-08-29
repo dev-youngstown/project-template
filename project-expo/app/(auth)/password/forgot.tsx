@@ -1,20 +1,20 @@
-import { forgotPassword } from "../../../api/auth";
-import { useAsync } from "@react-hookz/web";
 import {
-  Text,
-  Heading,
-  VStack,
   Button,
   ButtonText,
-  useToast,
+  Heading,
+  Text,
   Toast,
-  ToastTitle,
   ToastDescription,
+  ToastTitle,
+  useToast,
+  VStack,
 } from "@gluestack-ui/themed";
-import FormContainer from "../../../components/forms/container";
+import { useAsync } from "@react-hookz/web";
 import { router } from "expo-router";
-import { ControlledInputField } from "../../../components/forms/inputs";
 import { useForm } from "react-hook-form";
+import { forgotPassword } from "../../../api/auth";
+import FormContainer from "../../../components/forms/container";
+import { ControlledInputField } from "../../../components/forms/inputs";
 
 interface FormData {
   email: string;
@@ -22,8 +22,7 @@ interface FormData {
 
 export default function PasswordForgot() {
   const toast = useToast();
-  const [forgotPasswordRequest, forgotPasswordActions] =
-    useAsync(forgotPassword);
+  const [, forgotPasswordActions] = useAsync(forgotPassword);
 
   const { handleSubmit, control } = useForm<FormData>();
 

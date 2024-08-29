@@ -18,7 +18,7 @@ export interface Tokens {
 
 export const forgotPassword = async (email: string) => {
   const result = await axios.post(
-    `${API_URL}/user/password/forgot?email=${email}`
+    `${API_URL}/user/password/forgot?email=${email}`,
   );
   return result.data;
 };
@@ -43,7 +43,7 @@ export const userRegister = async (
   email: string,
   password: string,
   first_name: string,
-  last_name: string
+  last_name: string,
 ) => {
   const result: { data: User } = await axios.post(`${API_URL}/user/register`, {
     email,
@@ -56,7 +56,7 @@ export const userRegister = async (
 
 export const changePassword = async (
   current_password: string,
-  new_password: string
+  new_password: string,
 ) => {
   try {
     const result = await axios.put(`${API_URL}/user/password/change`, {

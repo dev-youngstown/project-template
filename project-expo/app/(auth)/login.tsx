@@ -20,7 +20,7 @@ export default function Login() {
   const { control, handleSubmit } = useForm<FormData>();
 
   const [sessionStatus, setSessionStatus] = useState<"not-started" | "loading">(
-    "not-started"
+    "not-started",
   );
 
   const [loginRequest, loginActions] = useAsync(login);
