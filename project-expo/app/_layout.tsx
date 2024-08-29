@@ -4,11 +4,11 @@ import { Slot } from "expo-router";
 import { AuthProvider } from "../components/context/AuthProvider";
 
 export default function RootLayout() {
-  return (
-    <AuthProvider>
-      <GluestackUIProvider config={config}>
-        <Slot />
-      </GluestackUIProvider>
-    </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <GluestackUIProvider config={config}>
+                <Slot />
+            </GluestackUIProvider>
+        </AuthProvider>
+    );
 }
