@@ -1,13 +1,13 @@
 import { Heading, VStack } from "@gluestack-ui/themed";
-import { useAuth } from "../../components/context/AuthProvider";
-import { useAsync } from "@react-hookz/web";
-import { userRegister, login } from "../../api/auth";
+import { useAuth } from "@/components/context/AuthProvider";
+import { useMutation } from "@tanstack/react-query";
+import { userRegister, login } from "@/api/auth";
 import { useForm } from "react-hook-form";
 import { Redirect } from "expo-router";
-import FormContainer from "../../components/forms/container";
+import FormContainer from "@/components/forms/container";
 import { useEffect, useState } from "react";
-import Button from "../../components/ui/button";
-import { ControlledInputField } from "../../components/forms/inputs";
+import Button from "@/components/ui/button";
+import { ControlledInputField } from "@/components/forms/inputs";
 
 interface FormData {
   email: string;
@@ -20,8 +20,14 @@ interface FormData {
 export default function Register() {
   const { session, authenticated } = useAuth();
   const { handleSubmit, watch, control } = useForm<FormData>();
-  const [registerRequest, registerActions] = useAsync(userRegister);
-  const [loginRequest, loginActions] = useAsync(login);
+  const registerMutation = useMutation({
+    mutationFn: (data: FormData) =>
+      userRegister(data.email, data.password, data.first_name, data.last_name),
+  });
+  const loginMutation = useMutation({
+    mutationFn: (data: { email: string; password: string }) =>
+      login(data.email, data.password),
+  });
   const [sessionStatus, setSessionStatus] = useState<"not-started" | "loading">(
     "not-started"
   );
@@ -31,12 +37,7 @@ export default function Register() {
   }>();
 
   const onSubmit = handleSubmit((data: FormData) => {
-    registerActions.execute(
-      data.email,
-      data.password,
-      data.first_name,
-      data.last_name
-    );
+    registerMutation.mutate(data);
     setNewUser({
       email: data.email,
       password: data.password,
@@ -44,17 +45,17 @@ export default function Register() {
   });
 
   useEffect(() => {
-    if (registerRequest.status === "success" && newUser) {
-      loginActions.execute(newUser.email, newUser.password);
+    if (registerMutation.isSuccess && newUser) {
+      loginMutation.mutate(newUser);
     }
-    if (loginRequest.status === "success" && loginRequest.result) {
-      const { access_token, refresh_token } = loginRequest.result;
+    if (loginMutation.isSuccess) {
+      const { access_token, refresh_token } = loginMutation.data;
       if (sessionStatus === "not-started") {
         setSessionStatus("loading");
         session.create(access_token, refresh_token);
       }
     }
-  }, [registerRequest.status, loginRequest.status, newUser]);
+  }, [registerMutation, loginMutation, newUser]);
 
   if (authenticated) {
     return <Redirect href="/" />;
@@ -124,8 +125,8 @@ export default function Register() {
         <Button
           text="Register"
           loading={
-            registerRequest.status === "loading" ||
-            loginRequest.status === "loading" ||
+            registerMutation.isPending ||
+            loginMutation.isPending ||
             sessionStatus === "loading"
           }
           onPress={onSubmit}

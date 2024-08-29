@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../config/project";
+import { API_URL } from "@/config/project";
 
 export interface User {
   id: number;
@@ -71,8 +71,11 @@ export const changePassword = async (
 };
 
 export const refreshTokenRequest = async (refreshToken: string) => {
-  const result = await axios.post(`${API_URL}/token/refresh`, {
-    refresh_token: refreshToken,
-  });
+  const result: { data: Tokens } = await axios.post(
+    `${API_URL}/token/refresh`,
+    {
+      refresh_token: refreshToken,
+    }
+  );
   return result.data;
 };
