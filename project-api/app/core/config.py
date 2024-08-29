@@ -36,6 +36,8 @@ class Settings(BaseSettings):
     SENTRY_DSN: str = os.getenv("SENTRY_DSN")
     NODE_ENV: str = os.getenv("NODE_ENV")
 
+    APP_HOST: str = os.getenv("APP_HOST")
+
     # use to define origins if not allowing all
     # BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = os.getenv("BACKEND_CORS_ORIGINS")
 
