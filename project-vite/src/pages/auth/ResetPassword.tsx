@@ -8,11 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuth } from "@/components/context/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  FormContainer,
-  FormPasswordElement,
-  FormTextFieldElement,
-} from "@rhf-kit/mui";
+import { FormContainer, FormPasswordElement } from "@rhf-kit/mui";
 
 interface FormData {
   newPassword: string;
