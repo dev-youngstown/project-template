@@ -1,0 +1,9 @@
+# Ignore artifacts:
+build
+coverage
+/node_modules/
+/dist/
+.idea
+.vscode
+package-lock.json
+package.json

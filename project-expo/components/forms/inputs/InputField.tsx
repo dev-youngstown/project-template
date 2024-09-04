@@ -1,10 +1,10 @@
 import { FormControl } from "../control";
 import { Input, InputField as GInputField } from "@gluestack-ui/themed";
 import {
-  Controller,
-  FieldError,
-  Control,
-  RegisterOptions,
+    Controller,
+    FieldError,
+    Control,
+    RegisterOptions,
 } from "react-hook-form";
 import { ComponentProps } from "react";
 import { ControlProps } from "../control";
@@ -12,9 +12,9 @@ import { ControlProps } from "../control";
 type IInputField = ComponentProps<typeof GInputField>;
 
 interface InputFieldProps extends IInputField, ControlProps {
-  isRequired?: boolean;
-  isInvalid?: boolean;
-  error?: FieldError | undefined;
+    isRequired?: boolean;
+    isInvalid?: boolean;
+    error?: FieldError | undefined;
 }
 
 /**
@@ -33,38 +33,38 @@ interface InputFieldProps extends IInputField, ControlProps {
  * />
  */
 export function InputField({
-  labelText,
-  helperText,
-  errorText,
-  isRequired,
-  isInvalid,
-  error,
-  ...props
+    labelText,
+    helperText,
+    errorText,
+    isRequired,
+    isInvalid,
+    error,
+    ...props
 }: InputFieldProps) {
-  return (
-    <FormControl
-      isRequired={isRequired}
-      isInvalid={!!error}
-      labelText={labelText}
-      helperText={helperText}
-      errorText={error?.message}
-    >
-      <Input>
-        <GInputField {...props} />
-      </Input>
-    </FormControl>
-  );
+    return (
+        <FormControl
+            isRequired={isRequired}
+            isInvalid={!!error}
+            labelText={labelText}
+            helperText={helperText}
+            errorText={error?.message}
+        >
+            <Input>
+                <GInputField {...props} />
+            </Input>
+        </FormControl>
+    );
 }
 
 interface ControlledInputFieldProps extends IInputField {
-  labelText: string;
-  helperText?: string;
-  isRequired?: boolean;
-  // removed errorText because it will be controlled by react-hook-form
-  // todo: look into type this to form data
-  control: Control<any, any> | undefined;
-  name: string;
-  rules: RegisterOptions;
+    labelText: string;
+    helperText?: string;
+    isRequired?: boolean;
+    // removed errorText because it will be controlled by react-hook-form
+    // todo: look into type this to form data
+    control: Control<any, any> | undefined;
+    name: string;
+    rules: RegisterOptions;
 }
 
 /**
@@ -86,29 +86,29 @@ interface ControlledInputFieldProps extends IInputField {
  * />
  */
 export function ControlledInputField({
-  labelText,
-  helperText,
-  isRequired,
-  control,
-  name,
-  rules,
-  ...props
+    labelText,
+    helperText,
+    isRequired,
+    control,
+    name,
+    rules,
+    ...props
 }: ControlledInputFieldProps) {
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field: { onChange }, fieldState: { error } }) => (
-        <InputField
-          {...props}
-          labelText={labelText}
-          helperText={helperText}
-          isRequired={isRequired}
-          onChangeText={onChange}
-          error={error}
+    return (
+        <Controller
+            name={name}
+            control={control}
+            rules={rules}
+            render={({ field: { onChange }, fieldState: { error } }) => (
+                <InputField
+                    {...props}
+                    labelText={labelText}
+                    helperText={helperText}
+                    isRequired={isRequired}
+                    onChangeText={onChange}
+                    error={error}
+                />
+            )}
         />
-      )}
-    />
-  );
+    );
 }

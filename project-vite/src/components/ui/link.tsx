@@ -8,19 +8,19 @@ import { styles } from "@/config/project";
  *
  */
 export const Link = ({ children, ...props }: LinkProps) => {
-  return (
-    <MUILink
-      sx={{
-        color: styles.primaryColor,
-        ":hover": {
-          color: `${styles.primaryColor}99`,
-        },
-      }}
-      {...props}
-    >
-      {children}
-    </MUILink>
-  );
+    return (
+        <MUILink
+            sx={{
+                color: styles.primaryColor,
+                ":hover": {
+                    color: `${styles.primaryColor}99`,
+                },
+            }}
+            {...props}
+        >
+            {children}
+        </MUILink>
+    );
 };
 
 export default Link;
