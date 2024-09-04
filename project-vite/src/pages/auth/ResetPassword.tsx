@@ -1,18 +1,18 @@
-import project from "../../config/project";
+import { resetPassword } from "@/api/auth";
+import { useAuth } from "@/components/context/AuthContext";
+import { FormBox, FormScreenContainer } from "@/components/forms/container";
+import Button from "@/components/ui/button";
+import Link from "@/components/ui/link";
+import project from "@/config/project";
 import { Box, Typography } from "@mui/material";
-import { FormBox, FormScreenContainer } from "../../components/forms/container";
-import Button from "../../components/ui/button";
-import Link from "../../components/ui/link";
-import { resetPassword } from "../../api/auth";
-import { useAsync } from "@react-hookz/web";
-import { useEffect } from "react";
-import { useAuth } from "../../components/context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import {
     FormContainer,
     FormPasswordElement,
     FormTextFieldElement,
 } from "@rhf-kit/mui";
+import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
     resetToken: string;
@@ -22,11 +22,13 @@ interface FormData {
 
 const ResetPassword = () => {
     const { authenticated } = useAuth();
-    const [resetPasswordState, resetPasswordActions] = useAsync(resetPassword);
     const navigate = useNavigate();
+    const resetPasswordMutation = useMutation({
+        mutationFn: resetPassword,
+    });
 
     const onSubmit = (data: FormData) => {
-        resetPasswordActions.execute({
+        resetPasswordMutation.mutate({
             token: data.resetToken,
             new_password: data.newPassword,
         });
@@ -90,7 +92,7 @@ const ResetPassword = () => {
                     />
                     <Button
                         fullWidth
-                        disabled={resetPasswordState.status === "loading"}
+                        disabled={resetPasswordMutation.isPending}
                     >
                         Reset Password
                     </Button>

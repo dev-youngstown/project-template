@@ -1,3 +1,6 @@
+import { resetPassword } from "@/api/auth";
+import FormContainer from "@/components/forms/container";
+import { ControlledInputField } from "@/components/forms/inputs";
 import {
     Button,
     ButtonText,
@@ -9,13 +12,10 @@ import {
     useToast,
     VStack,
 } from "@gluestack-ui/themed";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { resetPassword } from "../../../api/auth";
-import FormContainer from "../../../components/forms/container";
-import { ControlledInputField } from "../../../components/forms/inputs";
 
 interface FormData {
     reset_token: string;
@@ -25,13 +25,20 @@ interface FormData {
 
 export default function PasswordReset() {
     const { token } = useLocalSearchParams<{ token?: string }>();
-    const [resetPasswordRequest, resetPasswordActions] =
-        useAsync(resetPassword);
+    const resetPasswordMutation = useMutation({
+        mutationFn: resetPassword,
+    });
     const toast = useToast();
-    const { handleSubmit, watch, control, setValue } = useForm<FormData>();
+    const {
+        handleSubmit,
+        watch,
+        control,
+        setValue,
+        formState: { errors },
+    } = useForm<FormData>();
 
     const onSubmit = handleSubmit((data: FormData) => {
-        resetPasswordActions.execute({
+        resetPasswordMutation.mutate({
             token: data.reset_token,
             new_password: data.password,
         });
@@ -44,7 +51,7 @@ export default function PasswordReset() {
     }, [token]);
 
     useEffect(() => {
-        if (resetPasswordRequest.status === "success") {
+        if (resetPasswordMutation.isSuccess) {
             toast.show({
                 placement: "bottom",
                 render: ({ id }) => {
@@ -67,7 +74,7 @@ export default function PasswordReset() {
             });
             router.replace("login");
         }
-        if (resetPasswordRequest.status === "error") {
+        if (resetPasswordMutation.isError) {
             toast.show({
                 placement: "bottom",
                 render: ({ id }) => {
@@ -90,7 +97,7 @@ export default function PasswordReset() {
                 },
             });
         }
-    }, [resetPasswordRequest.status]);
+    }, [resetPasswordMutation]);
 
     return (
         <FormContainer>

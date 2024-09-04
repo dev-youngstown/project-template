@@ -1,4 +1,6 @@
-import { useAsync } from "@react-hookz/web";
+// import { useAsync } from "@react-hookz/web";
+import { IUser, getProfile } from "@/api/profile";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
     ReactNode,
@@ -7,9 +9,6 @@ import {
     useEffect,
     useState,
 } from "react";
-import { IUser, getProfile } from "../../api/profile";
-
-// TODO: remove console logs
 
 export type AuthContextType = {
     authenticated: boolean;
@@ -39,34 +38,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<IUser | null>(null);
     const [mounted, setMounted] = useState(false);
+    const queryClient = useQueryClient();
 
     // api
-    const [profileState, profileActions] = useAsync(getProfile);
-    const [refreshState, refreshActions] = useAsync(getProfile);
+    const profileQuery = useQuery({
+        queryKey: ["profile"],
+        queryFn: getProfile,
+        enabled: false,
+    });
+    const refreshQuery = useQuery({
+        queryKey: ["refreshProfile"],
+        queryFn: getProfile,
+        enabled: false,
+    });
 
     // handle profile
     useEffect(() => {
         if (!isAuthenticated) {
-            if (profileState.status === "success" && profileState.result) {
-                setUser(profileState.result);
+            if (profileQuery.isSuccess) {
+                setUser(profileQuery.data);
                 setIsAuthenticated(true);
             }
         }
-    }, [profileState, isAuthenticated, mounted]);
+    }, [isAuthenticated, mounted, profileQuery]);
 
     // initial check
     useEffect(() => {
-        const token = localStorage.getItem("access_token");
-        if (token) {
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            if (profileState.status === "not-executed") {
-                profileActions.execute();
+        if (!mounted) {
+            const token = localStorage.getItem("access_token");
+            if (token) {
+                axios.defaults.headers.common["Authorization"] =
+                    `Bearer ${token}`;
+                profileQuery.refetch();
+            } else {
+                setIsAuthenticated(false);
+                setMounted(true);
             }
-        } else {
-            setIsAuthenticated(false);
-            setMounted(true);
         }
-    }, [profileActions, profileState]);
+    }, [profileQuery, mounted]);
 
     const handleAuthentication = (authenticated: boolean) => {
         if (authenticated) {
@@ -78,27 +87,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        if (profileState.status === "success" && profileState.result) {
+        if (profileQuery.isSuccess) {
             handleAuthentication(true);
         }
-        if (profileState.status === "error") {
+        if (profileQuery.isError) {
             handleAuthentication(false);
         }
-    }, [profileState.status, profileState.result]);
+    }, [profileQuery]);
 
     useEffect(() => {
-        if (refreshState.status === "success" && refreshState.result) {
-            setUser(refreshState.result);
+        if (refreshQuery.isSuccess) {
+            setUser(refreshQuery.data);
         }
-        if (refreshState.status === "error") {
+        if (refreshQuery.isError) {
             setIsAuthenticated(false);
         }
-    }, [refreshState]);
+    }, [refreshQuery]);
 
     const createSession = async (token: string) => {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         localStorage.setItem("access_token", token);
-        profileActions.execute();
+        profileQuery.refetch();
     };
 
     const endSession = () => {
@@ -106,12 +115,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem("access_token");
         setIsAuthenticated(false);
         setUser(null);
-        profileActions.execute();
+        queryClient.clear();
     };
 
     const refreshSession = async () => {
         setUser(null);
-        refreshActions.execute();
+        refreshQuery.refetch();
     };
 
     const session = {

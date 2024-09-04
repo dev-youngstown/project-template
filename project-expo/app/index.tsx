@@ -1,16 +1,16 @@
-import { Link } from "expo-router";
-import { useAuth } from "../components/context/AuthProvider";
+import { useAuth } from "@/components/context/AuthProvider";
 import {
-    Heading,
+    Box,
     Button,
     ButtonText,
+    Heading,
     LinkText,
     Text,
-    Box,
     VStack,
 } from "@gluestack-ui/themed";
-import project from "../config/project";
+import { Link } from "expo-router";
 import * as Sentry from "sentry-expo";
+import project from "../config/project";
 
 export default function Home() {
     const { session, authenticated, user } = useAuth();

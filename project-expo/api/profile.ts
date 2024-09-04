@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../config/project";
+import { API_URL } from "@/config/project";
 
 export interface UserModel {
     id: number;

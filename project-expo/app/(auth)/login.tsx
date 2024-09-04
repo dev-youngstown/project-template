@@ -1,12 +1,12 @@
-import { useAuth } from "../../components/context/AuthProvider";
-import { useAsync } from "@react-hookz/web";
-import { login } from "../../api/auth";
+import { login } from "@/api/auth";
+import { useAuth } from "@/components/context/AuthProvider";
+import FormContainer from "@/components/forms/container";
+import { ControlledInputField } from "@/components/forms/inputs";
+import Button from "@/components/ui/button";
+import { Heading, LinkText, Text, VStack } from "@gluestack-ui/themed";
+import { useMutation } from "@tanstack/react-query";
+import { Link, Redirect } from "expo-router";
 import { useState } from "react";
-import { Redirect, Link } from "expo-router";
-import { Text, Heading, VStack, LinkText } from "@gluestack-ui/themed";
-import FormContainer from "../../components/forms/container";
-import Button from "../../components/ui/button";
-import { ControlledInputField } from "../../components/forms/inputs";
 import { useForm } from "react-hook-form";
 
 interface FormData {
@@ -23,10 +23,12 @@ export default function Login() {
         "not-started" | "loading"
     >("not-started");
 
-    const [loginRequest, loginActions] = useAsync(login);
+    const loginMutation = useMutation({
+        mutationFn: (data: FormData) => login(data.email, data.password),
+    });
 
     const onSubmit = handleSubmit((data: FormData) => {
-        loginActions.execute(data.email, data.password);
+        loginMutation.mutate(data);
     });
 
     const onLogin = async (access_token: string, refresh_token: string) => {
@@ -34,8 +36,8 @@ export default function Login() {
         session.create(access_token, refresh_token);
     };
 
-    if (loginRequest.status === "success" && loginRequest.result) {
-        const { access_token, refresh_token } = loginRequest.result;
+    if (loginMutation.isSuccess) {
+        const { access_token, refresh_token } = loginMutation.data;
         // usestate to prevent multiple calls
         if (sessionStatus === "not-started") {
             onLogin(access_token, refresh_token);
@@ -50,7 +52,7 @@ export default function Login() {
         <FormContainer>
             <Heading>Welcome back!</Heading>
 
-            {loginRequest.error && loginRequest.status !== "loading" ? (
+            {loginMutation.isError ? (
                 <Text color="red">Invalid email or password</Text>
             ) : null}
             <VStack gap="$4" my="$2">
@@ -75,8 +77,7 @@ export default function Login() {
                 <Button
                     text="Login"
                     loading={
-                        loginRequest.status === "loading" ||
-                        sessionStatus === "loading"
+                        loginMutation.isPending || sessionStatus === "loading"
                     }
                     onPress={onSubmit}
                 />

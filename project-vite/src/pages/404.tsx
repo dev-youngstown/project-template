@@ -1,4 +1,4 @@
-import { FormScreenContainer } from "../components/forms/container";
+import { FormScreenContainer } from "@/components/forms/container";
 import { Typography } from "@mui/material";
 
 const Page404 = () => {

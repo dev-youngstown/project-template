@@ -1,16 +1,16 @@
-import project from "../../config/project";
+import { forgotPassword } from "@/api/auth";
+import { useAuth } from "@/components/context/AuthContext";
+import { FormBox, FormScreenContainer } from "@/components/forms/container";
+import Button from "@/components/ui/button";
+import Link from "@/components/ui/link";
+import project from "@/config/project";
 import { Box, Typography } from "@mui/material";
-import { FormBox, FormScreenContainer } from "../../components/forms/container";
-import Button from "../../components/ui/button";
-import Link from "../../components/ui/link";
-import { useAsync } from "@react-hookz/web";
-import { forgotPassword } from "../../api/auth";
-import { ArrowLeft } from "lucide-react";
-import { useEffect } from "react";
-import { useAuth } from "../../components/context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { enqueueSnackbar } from "notistack";
 import { FormContainer, FormEmailElement } from "@rhf-kit/mui";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
+import { enqueueSnackbar } from "notistack";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
     email: string;
@@ -18,12 +18,13 @@ interface FormData {
 
 const ForgotPassword = () => {
     const { authenticated } = useAuth();
-    const [forgotPasswordState, forgotPasswordActions] =
-        useAsync(forgotPassword);
     const navigate = useNavigate();
+    const forgotPasswordMutation = useMutation({
+        mutationFn: forgotPassword,
+    });
 
     const onSubmit = (data: FormData) => {
-        forgotPasswordActions.execute(data.email);
+        forgotPasswordMutation.mutate(data.email);
         enqueueSnackbar(
             "Success! Please check your email for the reset link.",
             {
@@ -71,7 +72,7 @@ const ForgotPassword = () => {
                     />
                     <Button
                         fullWidth
-                        loading={forgotPasswordState.status === "loading"}
+                        loading={forgotPasswordMutation.isPending}
                     >
                         Submit
                     </Button>

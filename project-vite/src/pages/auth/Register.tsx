@@ -1,20 +1,20 @@
-import project from "../../config/project";
-import { ArrowLeft } from "lucide-react";
+import { registerUser } from "@/api/auth";
+import { useAuth } from "@/components/context/AuthContext";
+import { FormBox, FormScreenContainer } from "@/components/forms/container";
+import Button from "@/components/ui/button.tsx";
+import Link from "@/components/ui/link";
+import project from "@/config/project";
 import { Box, Typography } from "@mui/material";
-import Link from "../../components/ui/link";
-import { FormBox, FormScreenContainer } from "../../components/forms/container";
-import { useAsync } from "@react-hookz/web";
-import { registerUser } from "../../api/auth";
-import { useEffect } from "react";
-import { useAuth } from "../../components/context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import {
     FormContainer,
     FormEmailElement,
     FormPasswordElement,
     FormTextFieldElement,
 } from "@rhf-kit/mui";
-import Button from "../../components/ui/button.tsx";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface FormData {
     firstName: string;
@@ -26,12 +26,14 @@ interface FormData {
 
 const Register = () => {
     const { authenticated } = useAuth();
-    const [registerState, registerActions] = useAsync(registerUser);
     const navigate = useNavigate();
+    const registerMutation = useMutation({
+        mutationFn: registerUser,
+    });
 
     const onSubmit = (data: FormData) => {
         console.log(data);
-        registerActions.execute({
+        registerMutation.mutate({
             first_name: data.firstName,
             last_name: data.lastName,
             email: data.email,
@@ -110,7 +112,7 @@ const Register = () => {
                     <Button
                         fullWidth
                         loadingPosition={"end"}
-                        loading={registerState.status === "loading"}
+                        loading={registerMutation.isPending}
                         variant={"contained"}
                     >
                         Sign Up

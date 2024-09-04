@@ -14,7 +14,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         db_obj = User(
-            **obj_in.dict(exclude={"password"}),
+            **obj_in.model_dump(exclude={"password"}),
             hashed_password=get_password_hash(obj_in.password),
         )
         db.add(db_obj)
@@ -24,7 +24,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def create_admin(self, db: Session, *, obj_in: UserCreate) -> User:
         db_obj = User(
-            **obj_in.dict(exclude={"password", "is_admin"}),
+            **obj_in.model_dump(exclude={"password", "is_admin"}),
             hashed_password=get_password_hash(obj_in.password),
             is_admin=True,
         )
@@ -39,7 +39,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
-            update_data = obj_in.dict(exclude_unset=True)
+            update_data = obj_in.model_dump(exclude_unset=True)
 
         return super().update(db, db_obj=db_obj, obj_in=update_data)
 

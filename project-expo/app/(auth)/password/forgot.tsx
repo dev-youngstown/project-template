@@ -1,3 +1,6 @@
+import { forgotPassword } from "@/api/auth";
+import FormContainer from "@/components/forms/container";
+import { ControlledInputField } from "@/components/forms/inputs";
 import {
     Button,
     ButtonText,
@@ -9,12 +12,9 @@ import {
     useToast,
     VStack,
 } from "@gluestack-ui/themed";
-import { useAsync } from "@react-hookz/web";
+import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useForm } from "react-hook-form";
-import { forgotPassword } from "../../../api/auth";
-import FormContainer from "../../../components/forms/container";
-import { ControlledInputField } from "../../../components/forms/inputs";
 
 interface FormData {
     email: string;
@@ -22,12 +22,14 @@ interface FormData {
 
 export default function PasswordForgot() {
     const toast = useToast();
-    const [, forgotPasswordActions] = useAsync(forgotPassword);
+    const forgotPasswordMutation = useMutation({
+        mutationFn: forgotPassword,
+    });
 
     const { handleSubmit, control } = useForm<FormData>();
 
     const onSubmit = handleSubmit((data: FormData) => {
-        forgotPasswordActions.execute(data.email);
+        forgotPasswordMutation.mutate(data.email);
         toast.show({
             placement: "bottom",
             render: ({ id }) => {
