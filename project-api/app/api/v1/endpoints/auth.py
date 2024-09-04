@@ -148,7 +148,8 @@ def recover_password(
         "forgot_password.html",
         {
             "request": request,
-            "PASSWORD_RESET_TOKEN": password_reset_token,
+            "MASTHEAD_LINK": settings.APP_HOST,
+            "PASSWORD_RESET_URL": f"{settings.APP_HOST}/password/reset?token={password_reset_token}",
             "PROJECT_NAME": settings.PROJECT_NAME,
             "COMPANY_ADDRESS": settings.COMPANY_ADDRESS,
             "SUPPORT_EMAIL": settings.SUPPORT_EMAIL,

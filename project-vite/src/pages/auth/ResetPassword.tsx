@@ -3,19 +3,12 @@ import { useAuth } from "@/components/context/AuthContext";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
 import Button from "@/components/ui/button";
 import Link from "@/components/ui/link";
-import project from "@/config/project";
-import { Box, Typography } from "@mui/material";
-import {
-    FormContainer,
-    FormPasswordElement,
-    FormTextFieldElement,
-} from "@rhf-kit/mui";
+import { FormContainer, FormPasswordElement } from "@rhf-kit/mui";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface FormData {
-    resetToken: string;
     newPassword: string;
     confirmNewPassword: string;
 }
@@ -26,10 +19,17 @@ const ResetPassword = () => {
     const resetPasswordMutation = useMutation({
         mutationFn: resetPassword,
     });
+    const [searchParams] = useSearchParams();
 
     const onSubmit = (data: FormData) => {
+        const token = searchParams.get("token");
+
+        if (!token) {
+            return;
+        }
+
         resetPasswordMutation.mutate({
-            token: data.resetToken,
+            token: token,
             new_password: data.newPassword,
         });
     };
@@ -40,12 +40,15 @@ const ResetPassword = () => {
         }
     }, [authenticated, navigate]);
 
+    if (!searchParams.has("token")) {
+        throw new Error("Reset token is required");
+    }
+
     return (
         <FormScreenContainer>
             <FormBox>
                 <FormContainer
                     defaultValues={{
-                        resetToken: "",
                         newPassword: "",
                         confirmNewPassword: "",
                     }}
@@ -60,16 +63,8 @@ const ResetPassword = () => {
                         Reset Password
                     </Typography>
                     <Typography gutterBottom>
-                        Enter the reset token and your new password below to
-                        reset your password.
+                        Enter and confirm your new password below to reset it.
                     </Typography>
-                    <FormTextFieldElement
-                        name={"resetToken"}
-                        required
-                        fullWidth
-                        label="Reset Token"
-                        margin="normal"
-                    />
                     <FormPasswordElement
                         name={"newPassword"}
                         required
