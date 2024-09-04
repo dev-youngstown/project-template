@@ -1,7 +1,7 @@
 import {
-  Button as GButton,
-  ButtonText,
-  ButtonSpinner,
+    Button as GButton,
+    ButtonText,
+    ButtonSpinner,
 } from "@gluestack-ui/themed";
 import { ComponentProps } from "react";
 
@@ -9,8 +9,8 @@ type IButtonProps = ComponentProps<typeof GButton>;
 
 // Props extended from gluestack-ui Button
 interface ButtonProps extends IButtonProps {
-  text: string;
-  loading: boolean;
+    text: string;
+    loading: boolean;
 }
 
 /**
@@ -23,9 +23,9 @@ interface ButtonProps extends IButtonProps {
  *
  */
 export default function Button({ text, loading, ...props }: ButtonProps) {
-  return (
-    <GButton {...props} isDisabled={loading}>
-      {loading ? <ButtonSpinner /> : <ButtonText>{text}</ButtonText>}
-    </GButton>
-  );
+    return (
+        <GButton {...props} isDisabled={loading}>
+            {loading ? <ButtonSpinner /> : <ButtonText>{text}</ButtonText>}
+        </GButton>
+    );
 }

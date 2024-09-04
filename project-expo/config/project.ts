@@ -1,5 +1,5 @@
 export const project = {
-  name: "Expo Template",
+    name: "Expo Template",
 };
 
 export default project;
