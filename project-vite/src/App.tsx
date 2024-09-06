@@ -1,21 +1,22 @@
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import * as Sentry from "@sentry/react";
+import { useEffect } from "react";
 import {
-    useLocation,
-    useNavigationType,
     createRoutesFromChildren,
     matchRoutes,
+    useLocation,
+    useNavigationType,
 } from "react-router";
-import { useEffect } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { AuthProvider } from "./components/context/AuthContext";
 import ProtectedRoute from "./components/context/ProtectedRoute";
+import { appRoutes } from "./config";
 import {
+    ForgotPassword,
     Home,
     Login,
-    Register,
-    ForgotPassword,
-    ResetPassword,
     Page404,
+    Register,
+    ResetPassword,
 } from "./pages";
 
 Sentry.init({
@@ -35,20 +36,25 @@ Sentry.init({
 const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 const App = () => {
+    const { base, notFound, auth } = appRoutes;
+
     return (
         <Router>
             <AuthProvider>
                 <SentryRoutes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="*" element={<Page404 />} />
+                    <Route path={base} element={<Home />} />
+                    <Route path={notFound} element={<Page404 />} />
                     {/* Auth Routes */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+                    <Route path={auth.login} element={<Login />} />
+                    <Route path={auth.register} element={<Register />} />
                     <Route
-                        path="/password/forgot"
+                        path={auth.forgotPassword}
                         element={<ForgotPassword />}
                     />
-                    <Route path="/password/reset" element={<ResetPassword />} />
+                    <Route
+                        path={auth.resetPassword}
+                        element={<ResetPassword />}
+                    />
 
                     {/* Session Routes */}
                     <Route element={<ProtectedRoute />}></Route>

@@ -1,5 +1,5 @@
 // import { useAsync } from "@react-hookz/web";
-import { IUser, getProfile } from "@/api/profile";
+import { IUser, getProfile } from "@/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {

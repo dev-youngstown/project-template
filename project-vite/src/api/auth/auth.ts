@@ -1,18 +1,7 @@
+import { API_URL } from "@/config";
 import axios from "axios";
-import { API_URL } from "@/config/project";
+import { ICreateUser } from "./auth.types";
 const API = `${API_URL}/user`;
-
-export interface Tokens {
-    access_token: string;
-    refresh_token: string;
-}
-
-export interface ICreateUser {
-    first_name: string;
-    last_name: string;
-    email: string;
-    password: string;
-}
 
 export const forgotPassword = async (email: string) => {
     const result = await axios.post(`${API}/password/forgot/${email}`);

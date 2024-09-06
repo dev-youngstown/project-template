@@ -1,3 +1,5 @@
+import { createTheme } from "@mui/material";
+
 export const project = {
     name: "Vite Template",
 };
@@ -13,4 +15,23 @@ export const styles = {
     errorColor: "#f5222d",
 };
 
-export const API_URL = import.meta.env.VITE_API_URL;
+export const theme = createTheme({
+    palette: {
+        primary: { main: styles.primaryColor },
+        secondary: {
+            main: styles.secondaryColor,
+        },
+        success: {
+            main: styles.successColor,
+        },
+        warning: {
+            main: styles.warningColor,
+        },
+        info: {
+            main: styles.infoColor,
+        },
+        error: {
+            main: styles.errorColor,
+        },
+    },
+});
