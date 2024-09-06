@@ -1,9 +1,13 @@
-import { resetPassword } from "@/api/auth";
+import { resetPassword } from "@/api";
 import { useAuth } from "@/components/context/AuthContext";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
-import Button from "@/components/ui/button";
-import Link from "@/components/ui/link";
-import { FormContainer, FormPasswordElement } from "@rhf-kit/mui";
+import { project } from "@/config";
+import { Box, Link, Typography } from "@mui/material";
+import {
+    FormButton as Button,
+    FormContainer,
+    FormPasswordElement,
+} from "@rhf-kit/mui";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";

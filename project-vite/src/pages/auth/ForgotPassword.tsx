@@ -1,11 +1,13 @@
-import { forgotPassword } from "@/api/auth";
+import { forgotPassword } from "@/api";
 import { useAuth } from "@/components/context/AuthContext";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
-import Button from "@/components/ui/button";
-import Link from "@/components/ui/link";
-import project from "@/config/project";
-import { Box, Typography } from "@mui/material";
-import { FormContainer, FormEmailElement } from "@rhf-kit/mui";
+import { project } from "@/config";
+import { Box, Link, Typography } from "@mui/material";
+import {
+    FormButton as Button,
+    FormContainer,
+    FormEmailElement,
+} from "@rhf-kit/mui";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { enqueueSnackbar } from "notistack";

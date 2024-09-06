@@ -1,11 +1,10 @@
-import { registerUser } from "@/api/auth";
+import { registerUser } from "@/api";
 import { useAuth } from "@/components/context/AuthContext";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
-import Button from "@/components/ui/button.tsx";
-import Link from "@/components/ui/link";
-import project from "@/config/project";
-import { Box, Typography } from "@mui/material";
+import { project } from "@/config";
+import { Box, Link, Typography } from "@mui/material";
 import {
+    FormButton as Button,
     FormContainer,
     FormEmailElement,
     FormPasswordElement,
