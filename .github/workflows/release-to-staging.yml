@@ -1,0 +1,16 @@
+name: Release to Staging
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Trigger Northflank Staging Pipeline
+        run: |
+          curl -X POST -H "Content-Type: application/json" -d '{}' ${{ secrets.NF_STAGING_PIPELINE_WEBHOOK }}

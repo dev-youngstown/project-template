@@ -1,0 +1,114 @@
+name: Project Vite CI
+
+on:
+  pull_request:
+
+defaults:
+  run:
+    working-directory: project-vite
+
+jobs:
+  npm-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm" # NOTE: Does not work inside of `act`, comment out while developing
+          cache-dependency-path: project-vite/package-lock.json # NOTE: Does not work inside of `act`, comment out while developing
+      - run: npm ci
+
+  build:
+    runs-on: ubuntu-latest
+    needs: npm-install
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm" # NOTE: Does not work inside of `act`, comment out while developing
+          cache-dependency-path: project-vite/package-lock.json # NOTE: Does not work inside of `act`, comment out while developing
+        env:
+          NODE_OPTIONS: "--max_old_space_size=8192"
+      - run: npm ci
+      - run: npm run build
+
+  #   Comment out test for now. Maybe a future feature.
+  #   test:
+  #     runs-on: ubuntu-latest
+  #     permissions:
+  #       # Required to checkout the code
+  #       contents: read
+  #       # Required to put a comment into the pull-request
+  #       pull-requests: write
+  #     needs: npm-install
+  #     steps:
+  #       - uses: actions/checkout@v4
+  #         with:
+  #           fetch-depth: 0
+  #       - uses: actions/setup-node@v4
+  #         with:
+  #           node-version: 20
+  #           cache: "npm" # NOTE: Does not work inside of `act`, comment out while developing
+  #           cache-dependency-path: frontend/package-lock.json # NOTE: Does not work inside of `act`, comment out while developing
+  #       - run: npm ci
+  #       - name: "Test"
+  #         run: npm run coverage
+  #       - name: "Report Coverage"
+  #         if: always() # Also generate the report if tests are failing
+  #         uses: davelosert/vitest-coverage-report-action@v2
+  #         with:
+  #           name: "Frontend"
+  #           vite-config-path: "./frontend/vite.config.js"
+  #           json-summary-path: "./frontend/coverage/coverage-summary.json"
+  #           json-final-path: "./frontend/coverage/coverage-final.json"
+
+  prettier:
+    runs-on: ubuntu-latest
+    needs: npm-install
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm" # NOTE: Does not work inside of `act`, comment out while developing
+          cache-dependency-path: project-vite/package-lock.json # NOTE: Does not work inside of `act`, comment out while developing
+      - run: npm ci
+      - run: npm run prettier:check
+
+  types:
+    runs-on: ubuntu-latest
+    needs: npm-install
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm" # NOTE: Does not work inside of `act`, comment out while developing
+          cache-dependency-path: project-vite/package-lock.json # NOTE: Does not work inside of `act`, comment out while developing
+      - run: npm ci
+      - run: npm run type-check
+
+  eslint:
+    runs-on: ubuntu-latest
+    needs: npm-install
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm" # NOTE: Does not work inside of `act`, comment out while developing
+          cache-dependency-path: project-vite/package-lock.json # NOTE: Does not work inside of `act`, comment out while developing
+      - run: npm ci
+      - run: npm run lint
