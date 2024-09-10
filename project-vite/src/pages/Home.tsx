@@ -1,6 +1,6 @@
-import { Typography, Button } from "@mui/material";
-import { useAuth } from "@/components/context/AuthContext";
+import { useAuth } from "@/components/";
 import project from "@/config/project";
+import { Button, Typography } from "@mui/material";
 
 const Home = () => {
     const { session, authenticated, user } = useAuth();

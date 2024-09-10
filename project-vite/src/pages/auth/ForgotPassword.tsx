@@ -1,5 +1,5 @@
 import { forgotPassword } from "@/api";
-import { useAuth } from "@/components/context/AuthContext";
+import { useAuth } from "@/components/";
 import { FormBox, FormScreenContainer } from "@/components/forms/container";
 import { project } from "@/config";
 import { Box, Link, Typography } from "@mui/material";
