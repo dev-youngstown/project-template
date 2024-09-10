@@ -8,11 +8,11 @@
         "ios": "expo start:ios",
         "web": "expo start --web",
         "build-simulator": "eas build --profile development-simulator",
-        "lint": "eslint ./src --max-warnings=0",
-        "lint-fix": "eslint ./src --max-warnings=0 --fix",
+        "lint": "eslint --max-warnings=0",
+        "lint-fix": "eslint --max-warnings=0 --fix",
         "prettier:check": "prettier --check .",
         "prettier:format": "prettier --write .",
-        "type-check": "tsc --noEmit"
+        "type-check": "NODE_OPTIONS=--max-old-space-size=8192 tsc --noEmit"
     },
     "dependencies": {
         "@gluestack-style/react": "^1.0.50",
