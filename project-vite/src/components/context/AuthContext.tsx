@@ -2,13 +2,7 @@
 import { IUser, getProfile } from "@/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import {
-    ReactNode,
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import { ReactNode, createContext, useEffect, useState } from "react";
 
 export type AuthContextType = {
     authenticated: boolean;
@@ -29,10 +23,6 @@ export const AuthContext = createContext<AuthContextType>({
     },
     user: null,
 });
-
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

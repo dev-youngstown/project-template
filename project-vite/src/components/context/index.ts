@@ -1,4 +1,4 @@
 export * from "./AuthContext";
-import ProtectedRoute from "./ProtectedRoute";
-
+export { useAuth } from "./useAuth";
 export { ProtectedRoute };
+import ProtectedRoute from "./ProtectedRoute";
