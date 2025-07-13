@@ -1,6 +1,6 @@
 from typing import Any, Annotated
 from fastapi import APIRouter, Depends, HTTPException, status, Response
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 from app.crud import v1 as crud
 from app.models import v1 as models
 from app.schemas import v1 as schemas

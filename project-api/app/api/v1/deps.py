@@ -4,30 +4,30 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from pydantic import ValidationError
-from sqlalchemy.orm import Session
+from sqlmodel import Session, select
 from app.crud import v1 as crud
 from app.models import v1 as models
 from app.schemas import v1 as schemas
 from app.core import security
 from app.core.config import settings
-from app.db.session import SessionLocal
+from app.db.session import engine
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_STR}/v1/docs/login")
 
 
 def get_db() -> Generator:
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as db:
+        try:
+            yield db
+        finally:
+            db.close()
 
 
 db_dep = Annotated[Session, Depends(get_db)]
 
 
 def get_development_user(db: db_dep) -> models.User:
-    return db.query(models.User).first()
+    return db.exec(select(models.User)).first()
 
 
 def get_current_user(
