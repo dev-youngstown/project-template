@@ -6,6 +6,8 @@
 
 ### Installation
 
+> Note: Vite requires Node.js version 20.19+ / 22.12+
+
 Install Vite and all dependencies:
 
 ```bash
