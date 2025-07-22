@@ -22,7 +22,7 @@ import {
 Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
     integrations: [
-        Sentry.reactRouterV6BrowserTracingIntegration({
+        Sentry.reactRouterV7BrowserTracingIntegration({
             useEffect: useEffect,
             useLocation,
             useNavigationType,
@@ -33,7 +33,7 @@ Sentry.init({
     tracesSampleRate: 1.0,
 });
 
-const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
+const SentryRoutes = Sentry.withSentryReactRouterV7Routing(Routes);
 
 const App = () => {
     const { base, notFound, auth } = appRoutes;
