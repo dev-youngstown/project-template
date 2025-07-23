@@ -7,7 +7,7 @@ import {
     useNavigationType,
 } from "react-router";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { AuthProvider } from "./components/context/AuthContext";
+import { AuthProvider } from "./components/context/AuthProvider";
 import ProtectedRoute from "./components/context/ProtectedRoute";
 import { appRoutes } from "./config";
 import {
