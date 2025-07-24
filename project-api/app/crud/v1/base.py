@@ -21,7 +21,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db.get(self.model, id)
 
     def count(self, db: Session) -> int:
-        return db.exec(select(func.count()).select_from(self.model)).one()
+        result = db.exec(select(func.count()).select_from(self.model)).first()
+        count = result[0] if result else 0
+        return count
 
     def get_multi(self, db: Session) -> Page[ModelType]:
         return paginate(db, select(self.model).order_by(self.model.id.desc()))
