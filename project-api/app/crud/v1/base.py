@@ -29,10 +29,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return paginate(db, select(self.model).order_by(self.model.id.desc()))
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
-        db_obj = (
-            # Should be fine to just call this without conditional check since obj_in is restricted to only SQLModel instances
-            obj_in.model_validate()
-        )
+        db_obj = self.model(**obj_in.model_dump())
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
