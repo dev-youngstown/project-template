@@ -2,7 +2,7 @@ from typing import Any, List, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Path
 from fastapi_pagination import Page
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from app.crud import v1 as crud
 from app.models import v1 as models

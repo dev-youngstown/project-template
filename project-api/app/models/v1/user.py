@@ -1,20 +1,18 @@
-from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
-
-from app.db.base_class import Base
+from sqlmodel import SQLModel, Field
+from app.models.mixin import TimestampMixin
 
 
-class User(Base):
+class User(SQLModel, TimestampMixin, table=True):
     __tablename__ = "users"
 
     # primaries
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(unique=True, index=True)
-    hashed_password: Mapped[str]
+    id: int = Field(primary_key=True, index=True)
+    email: str = Field(unique=True, index=True)
+    hashed_password: str
 
-    first_name: Mapped[str]
-    last_name: Mapped[str]
+    first_name: str
+    last_name: str
 
     # account checks
-    is_admin: Mapped[bool] = mapped_column(default=False)
-    is_disabled: Mapped[bool] = mapped_column(default=False)
+    is_admin: bool = Field(default=False)
+    is_disabled: bool = Field(default=False)

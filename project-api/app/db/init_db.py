@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from app.crud import v1 as crud
 from app.schemas import v1 as schemas
