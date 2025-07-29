@@ -75,7 +75,10 @@ export const ErrorResetBoundary = ({ children }: IErrorResetBoundaryProps) => {
             {({ reset }) => (
                 <ErrorBoundary
                     fallback={({ error, resetError }) => (
-                        <RenderError error={error} resetError={resetError} />
+                        <RenderError
+                            error={error as Error}
+                            resetError={resetError}
+                        />
                     )}
                     onReset={reset}
                 >

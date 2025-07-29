@@ -6,6 +6,8 @@
 
 ### Installation
 
+> Note: Vite requires Node.js version 20.19+ / 22.12+
+
 Install Vite and all dependencies:
 
 ```bash
@@ -18,9 +20,9 @@ npm install
 
 Copy the `.env.example` file to `.env.local`
 
--   Set `VITE_API_URL` variable to the URL of your FastAPI server.
--   Set `VITE_SENTRY_DSN` variable to the DSN of your Sentry project.
--   Set `SENTRY_AUTH_TOKEN` variable to the auth token of your Sentry project.
+- Set `VITE_API_URL` variable to the URL of your FastAPI server.
+- Set `VITE_SENTRY_DSN` variable to the DSN of your Sentry project.
+- Set `SENTRY_AUTH_TOKEN` variable to the auth token of your Sentry project.
 
 ```plaintext
 # .env.local
