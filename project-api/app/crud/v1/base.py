@@ -30,9 +30,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         db_obj = (
-            self.model.model_validate(obj_in)
-            if hasattr(obj_in, "model_validate")
-            else self.model(**jsonable_encoder(obj_in))
+            # Should be fine to just call this without conditional check since obj_in is restricted to only SQLModel instances
+            obj_in.model_validate()
         )
         db.add(db_obj)
         db.commit()
