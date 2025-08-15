@@ -51,8 +51,18 @@ app.mount(
 )
 
 
-@app.get("/{fullpath:path}")
-async def serve_frontend(fullpath: str):
-    if fullpath.startswith("/api"):
-        return HTTPException(status_code=404, detail="Not Found")
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    if full_path == "" or full_path == "/":
+        return FileResponse(os.path.join(frontend_path, "index.html"))
+
+    # This is optional, but I figured we shouldn't serve index.html directly
+    if full_path == "index.html":
+        raise HTTPException(status_code=404)
+
+    file_path = os.path.join(frontend_path, full_path)
+
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+
     return FileResponse(os.path.join(frontend_path, "index.html"))
